@@ -35,7 +35,7 @@ Instance.new("UICorner", Panel)
 
 local Stroke = Instance.new("UIStroke", Panel)
 Stroke.Color = Color3.fromRGB(0,255,255)
-Stroke.Thickness = 2 -- Agar efek RGB lebih terlihat
+Stroke.Thickness = 2
 
 local UIScale = Instance.new("UIScale", Panel)
 UIScale.Scale = Save.Scale
@@ -140,7 +140,7 @@ FlagBtn.MouseButton1Click:Connect(function()
 
     pcall(function()
         if Save.Flag then
-            setfflag("MaxMissedWorldStepsRemembered",10000)
+            setfflag("MaxMissedWorldStepsRemembered",1000)
         else
             setfflag("MaxMissedWorldStepsRemembered",0)
         end
