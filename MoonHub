@@ -204,32 +204,9 @@ UIS.InputChanged:Connect(function(input)
 end)
 
 Button.MouseButton1Click:Connect(function()
-    if OnCooldown then
-        Status.Text = "Cooldown..."
-        Title.Text = "Overloading"
-        return
-    end
-
-    OnCooldown = true
-    Status.Text = "Freezing..."
-     Title.Text = "Please Wait..."
-
     local t = os.clock()
     while os.clock() - t < Save.LagTime do
-        for i = 1, 500000 do end
+        for i=1,500000 do end
     end
-
-    Status.Text = "Cooldown..."
-    Title.Text = "Overloading"
-
-    for i = Save.Cooldown, 1, -1 do
-        Status.Text = "Cooldown: "..i
-        task.wait(1)
-    end
-
-    Status.Text = "System Ready"
-    Title.Text = "FREEZE NOW"
-    OnCooldown = false
 end)
-
 print("UltraFreeze By Snowy Loaded")
