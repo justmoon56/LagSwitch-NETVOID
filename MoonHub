@@ -215,7 +215,7 @@ Button.MouseButton1Click:Connect(function()
      Title.Text = "Please Wait..."
 
     local t = os.clock()
-    while os.clock() - t < 0.3 do
+    while os.clock() - t < Save.LagTime do
         for i = 1, 500000 do end
     end
 
