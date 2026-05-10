@@ -55,7 +55,7 @@ local Status = Instance.new("TextLabel", Panel)
 Status.Size = UDim2.new(1,-20,0.3,0)
 Status.Position = UDim2.new(0,10,0.65,0)
 Status.BackgroundTransparency = 1
-Status.Text = ""
+Status.Text = "System Ready"
 Status.Font = Enum.Font.Code
 Status.TextSize = 12
 Status.TextColor3 = Color3.fromRGB(150,255,255)
@@ -203,12 +203,33 @@ UIS.InputChanged:Connect(function(input)
     end
 end)
 
--- Freeze Button
 Button.MouseButton1Click:Connect(function()
-    local t = os.clock()
-    while os.clock() - t < Save.LagTime do
-        for i=1,50000 do end
+    if OnCooldown then
+        Status.Text = "Cooldown..."
+        Title.Text = "Overloading"
+        return
     end
+
+    OnCooldown = true
+    Status.Text = "Freezing..."
+     Title.Text = "Please Wait..."
+
+    local t = os.clock()
+    while os.clock() - t < 0.3 do
+        for i = 1, 500000 do end
+    end
+
+    Status.Text = "Cooldown..."
+    Title.Text = "Overloading"
+
+    for i = Save.Cooldown, 1, -1 do
+        Status.Text = "Cooldown: "..i
+        task.wait(1)
+    end
+
+    Status.Text = "System Ready"
+    Title.Text = "FREEZE NOW"
+    OnCooldown = false
 end)
 
 print("UltraFreeze By Snowy Loaded")
