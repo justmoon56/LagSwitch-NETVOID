@@ -31,7 +31,7 @@ local Panel = Instance.new("ImageLabel", ScreenGui)
 Panel.Size = UDim2.new(0,260,0,90)
 Panel.Position = Save.Pos
 Panel.Image = "rbxassetid://72468404636284"
-Panel.ImageTransparency = 0.3
+Panel.ImageTransparency = 0.2
 Panel.BackgroundTransparency = 1
 Panel.Active = true
 
@@ -64,7 +64,7 @@ GradientGlow.Color = Gradient.Color
 
 -- Trail
 local TrailStroke = Instance.new("UIStroke", Panel)
-TrailStroke.Thickness = 3
+TrailStroke.Thickness = 4
 TrailStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
 local TrailGradient = Instance.new("UIGradient", TrailStroke)
@@ -149,7 +149,7 @@ end)
 -- Transparency System
 local function ApplyMode()
     if Save.Mode == 1 then -- NORMAL
-        Panel.ImageTransparency = 0.3
+        Panel.ImageTransparency = 0.2
         Panel.BackgroundTransparency = 1
 
         Title.TextTransparency = 0
