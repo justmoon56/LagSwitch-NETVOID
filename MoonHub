@@ -1,64 +1,102 @@
+-- UltraFreeze Final Version
 local Player = game:GetService("Players").LocalPlayer
 local UIS = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
+
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
--- Save System 
-local Save = {
-    Pos = UDim2.new(0.7, -60, 0.5, -60),
-    Scale = 1,
-    LagTime = 1,
-    Flag = false,
-    RGBSpeed = 1
-}
-
-local UILocked = false
-
--- Remove Old Ui
+-- Remove old UI
 for _,v in pairs(PlayerGui:GetChildren()) do
     if v.Name == "UltraFreezeUI" then
         v:Destroy()
     end
 end
 
--- ScreenGUI
+-- Save System
+local Save = {
+    Scale = 1,
+    RGBSpeed = 1,
+    Pos = UDim2.new(0.75,0,0.2,0),
+    Mode = 1,
+    LagTime = 1,
+    Flag = false
+}
+
+-- GUI
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "UltraFreezeUI"
 ScreenGui.ResetOnSpawn = false
 
-local Panel = Instance.new("Frame", ScreenGui)
-Panel.Size = UDim2.new(0,260,0,80)
+-- Image Panel Ui
+local Panel = Instance.new("ImageLabel", ScreenGui)
+Panel.Size = UDim2.new(0,260,0,90)
 Panel.Position = Save.Pos
-Panel.BackgroundColor3 = Color3.fromRGB(10,15,25)
+Panel.Image = "rbxassetid://72468404636284"
+Panel.ImageTransparency = 0.3
+Panel.BackgroundTransparency = 1
 Panel.Active = true
-Instance.new("UICorner", Panel)
 
-local Stroke = Instance.new("UIStroke", Panel)
-Stroke.Color = Color3.fromRGB(0,255,255)
-Stroke.Thickness = 2
-
+-- Scale
 local UIScale = Instance.new("UIScale", Panel)
 UIScale.Scale = Save.Scale
 
+Instance.new("UICorner", Panel).CornerRadius = UDim.new(0,12)
+
+-- Stroke
+local Stroke = Instance.new("UIStroke", Panel)
+Stroke.Thickness = 3
+Stroke.Color = Color3.new(1,1,1)
+
+local Glow = Instance.new("UIStroke", Panel)
+Glow.Thickness = 2
+Glow.Transparency = 0.7
+Glow.Color = Color3.new(1,1,1)
+
+-- RGB Base
+local Gradient = Instance.new("UIGradient", Stroke)
+Gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255,0,255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0,255,255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255,0,255))
+}
+
+local GradientGlow = Instance.new("UIGradient", Glow)
+GradientGlow.Color = Gradient.Color
+
+-- Trail
+local TrailStroke = Instance.new("UIStroke", Panel)
+TrailStroke.Thickness = 3
+TrailStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+local TrailGradient = Instance.new("UIGradient", TrailStroke)
+TrailGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255,0,255)),
+    ColorSequenceKeypoint.new(0.25, Color3.fromRGB(0,255,255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0,255,0)),
+    ColorSequenceKeypoint.new(0.75, Color3.fromRGB(255,255,0)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255,0,255))
+}
+
 -- Title
 local Title = Instance.new("TextLabel", Panel)
-Title.Size = UDim2.new(1,-20,0.6,0)
-Title.Position = UDim2.new(0,10,0,15)
+Title.Size = UDim2.new(1,0,1,0)
 Title.BackgroundTransparency = 1
 Title.Text = "FREEZE NOW"
-Title.TextColor3 = Color3.fromRGB(0,255,255)
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 22
+Title.TextSize = 23
+Title.TextXAlignment = Enum.TextXAlignment.Center
+Title.TextYAlignment = Enum.TextYAlignment.Center
+Title.TextColor3 = Color3.new(1,1,1)
 
--- Status
+-- Status Credit
 local Status = Instance.new("TextLabel", Panel)
-Status.Size = UDim2.new(1,-20,0.3,0)
-Status.Position = UDim2.new(0,10,0.65,0)
+Status.Size = UDim2.new(1,0,0,18)
+Status.Position = UDim2.new(0,0,1,-18)
 Status.BackgroundTransparency = 1
-Status.Text = "System Ready"
-Status.Font = Enum.Font.Code
-Status.TextSize = 12
-Status.TextColor3 = Color3.fromRGB(150,255,255)
+Status.Text = "Made By Moon"
+Status.Font = Enum.Font.Gotham
+Status.TextSize = 13
+Status.TextXAlignment = Enum.TextXAlignment.Center
+Status.TextColor3 = Color3.fromRGB(128,255,255)
 
 -- Button
 local Button = Instance.new("TextButton", Panel)
@@ -66,33 +104,124 @@ Button.Size = UDim2.new(1,0,1,0)
 Button.BackgroundTransparency = 1
 Button.Text = ""
 
--- Settings
-local Settings = Instance.new("Frame", Panel)
-Settings.Size = UDim2.new(1,-70,0,135)
-Settings.Position = UDim2.new(0,0,1,5)
-Settings.BackgroundColor3 = Color3.fromRGB(15,20,30)
-Settings.Visible = false
-Instance.new("UICorner", Settings)
+-- Lock
+local UILocked = false
+local Lock = Instance.new("TextButton", Panel)
+Lock.Size = UDim2.new(0,28,0,28)
+Lock.Position = UDim2.new(1,-30,1,-30)
+Lock.Text = "🔓"
+Lock.BackgroundColor3 = Color3.fromRGB(20,20,20)
+Lock.BackgroundTransparency = 0.2
+Instance.new("UICorner", Lock)
+
+Lock.MouseButton1Click:Connect(function()
+    UILocked = not UILocked
+    Lock.Text = UILocked and "🔒" or "🔓"
+end)
 
 -- Gear
 local Gear = Instance.new("TextButton", Panel)
-Gear.Size = UDim2.new(0,30,0,30)
-Gear.Position = UDim2.new(1,-35,0,5)
+Gear.Size = UDim2.new(0,28,0,28)
+Gear.Position = UDim2.new(1,-30,0,2)
 Gear.Text = "⚙️"
 Gear.BackgroundColor3 = Color3.fromRGB(20,20,20)
-Gear.TextColor3 = Color3.new(1,1,1)
+Gear.BackgroundTransparency = 0.2
+Instance.new("UICorner", Gear)
+
+-- Settings Panel
+local Settings = Instance.new("Frame", ScreenGui)
+Settings.Size = UDim2.new(0,180,0,205)
+Settings.BackgroundColor3 = Color3.fromRGB(20,25,35)
+Settings.Visible = false
+Settings.Active = true
+Instance.new("UICorner", Settings)
+
+local function updateSettingsPos()
+    Settings.Position = Panel.Position + UDim2.new(0,270,0,0)
+end
+
+updateSettingsPos()
 
 Gear.MouseButton1Click:Connect(function()
     Settings.Visible = not Settings.Visible
 end)
 
--- Scale
+-- Transparency System
+local function ApplyMode()
+    if Save.Mode == 1 then -- NORMAL
+        Panel.ImageTransparency = 0.3
+        Panel.BackgroundTransparency = 1
+
+        Title.TextTransparency = 0
+        Status.TextTransparency = 0
+
+        Stroke.Transparency = 0
+        Glow.Transparency = 0.7
+        TrailStroke.Transparency = 1
+
+        Lock.BackgroundTransparency = 0
+        Lock.TextTransparency = 0
+        Gear.BackgroundTransparency = 0
+        Gear.TextTransparency = 0
+
+    elseif Save.Mode == 2 then -- SMART
+        Panel.ImageTransparency = 1
+        Panel.BackgroundTransparency = 1
+
+        Title.TextTransparency = 1
+        Status.TextTransparency = 1
+
+        Stroke.Transparency = 1
+        Glow.Transparency = 1
+        TrailStroke.Transparency = 1
+
+        Lock.BackgroundTransparency = 0
+        Lock.TextTransparency = 0
+        Gear.BackgroundTransparency = 0
+        Gear.TextTransparency = 0
+
+    elseif Save.Mode == 3 then -- FULL
+        Panel.ImageTransparency = 1
+        Panel.BackgroundTransparency = 1
+
+        Title.TextTransparency = 1
+        Status.TextTransparency = 1
+
+        Stroke.Transparency = 1
+        Glow.Transparency = 1
+
+        Lock.BackgroundTransparency = 1
+        Lock.TextTransparency = 1
+        Gear.BackgroundTransparency = 1
+        Gear.TextTransparency = 1
+    end
+end
+
+ApplyMode()
+
+-- ToggleBtn ( TransBtn )
+local ModeBtn = Instance.new("TextButton", Settings)
+ModeBtn.Size = UDim2.new(1,-20,0,30)
+ModeBtn.Position = UDim2.new(0,10,0,10)
+ModeBtn.Text = "Mode: Normal"
+ModeBtn.BackgroundColor3 = Color3.fromRGB(30,35,45)
+ModeBtn.TextColor3 = Color3.fromRGB(128,255,255)
+Instance.new("UICorner", ModeBtn)
+
+ModeBtn.MouseButton1Click:Connect(function()
+    Save.Mode += 1
+    if Save.Mode > 3 then Save.Mode = 1 end
+    ModeBtn.Text = ({"Mode: Normal","Mode: Smart","Mode: Full"})[Save.Mode]
+    ApplyMode()
+end)
+
+-- Scaled System
 local ScaleBtn = Instance.new("TextButton", Settings)
-ScaleBtn.Size = UDim2.new(1,-20,0,25)
-ScaleBtn.Position = UDim2.new(0,10,0,10)
+ScaleBtn.Size = UDim2.new(1,-20,0,30)
+ScaleBtn.Position = UDim2.new(0,10,0,50)
 ScaleBtn.Text = "Scale: 1x"
-ScaleBtn.BackgroundColor3 = Color3.fromRGB(25,25,20)
-ScaleBtn.TextColor3 = Color3.fromRGB(0,255,255)
+ScaleBtn.BackgroundColor3 = Color3.fromRGB(30,35,45)
+ScaleBtn.TextColor3 = Color3.fromRGB(128,255,255)
 Instance.new("UICorner", ScaleBtn)
 
 ScaleBtn.MouseButton1Click:Connect(function()
@@ -105,7 +234,110 @@ end)
 -- Ms Input
 local LagBox = Instance.new("TextBox", Settings)
 LagBox.Size = UDim2.new(1,-20,0,25)
-LagBox.Position = UDim2.new(0,10,0,40)
+LagBox.Position = UDim2.new(0,10,0,90)
+LagBox.Text = tostring(Save.LagTime)
+LagBox.BackgroundColor3 = Color3.fromRGB(20,20,20)
+LagBox.TextColor3 = Color3.fromRGB(0,255,255)
+
+local ApplyLag = Instance.new("TextButton", Settings)
+ApplyLag.Size = UDim2.new(1,-20,0,25)
+ApplyLag.Position = UDim2.new(0,10,0,125)
+ApplyLag.Text = "Apply"
+ApplyLag.BackgroundColor3 = Color3.fromRGB(30,35,45)
+ApplyLag.TextColor3 = Color3.fromRGB(128,255,255)
+Instance.new("UICorner", ApplyLag)
+
+ApplyLag.MouseButton1Click:Connect(function()
+    local num = tonumber(LagBox.Text)
+    if num then
+        Save.LagTime = math.clamp(num,0.05,3)
+    end
+end)
+
+-- Flags System
+local FlagBtn = Instance.new("TextButton", Settings)
+FlagBtn.Size = UDim2.new(1,-20,0,30)
+FlagBtn.Position = UDim2.new(0,10,0,160)
+FlagBtn.Text = "FastFlag: Off"
+FlagBtn.BackgroundColor3 = Color3.fromRGB(30,35,45)
+FlagBtn.TextColor3 = Color3.fromRGB(128,255,255)
+Instance.new("UICorner", FlagBtn)
+
+local function ApplyFlag()
+    pcall(function()
+        setfflag("MaxMissedWorldStepsRemembered", Save.Flag and 1000 or 0)
+    end)
+end
+
+FlagBtn.MouseButton1Click:Connect(function()
+    Save.Flag = not Save.Flag
+    FlagBtn.Text = Save.Flag and "FastFlag: On" or "FastFlag: Off"
+    ApplyFlag()
+end)
+
+-- RGB Loop
+task.spawn(function()
+    while true do
+        local t = tick()
+        local move = t * 2 * Save.RGBSpeed
+
+        Gradient.Rotation += 1 * Save.RGBSpeed
+        GradientGlow.Rotation += 1 * Save.RGBSpeed
+        TrailGradient.Rotation += 4 * Save.RGBSpeed
+
+        local offset = Vector2.new(math.cos(move), math.sin(move))
+
+        Gradient.Offset = offset
+        GradientGlow.Offset = offset
+        TrailGradient.Offset = Vector2.new(move % 1, 0)
+
+        task.wait(0.02)
+    end
+end)
+
+
+-- Drag System
+local dragging, dragInput, dragStart, startPos
+
+Button.InputBegan:Connect(function(input)
+    if UILocked then return end
+
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+    or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = Panel.Position
+    end
+end)
+
+Button.InputChanged:Connect(function(input)
+    dragInput = input
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if input == dragInput and dragging and not UILocked then
+        local delta = input.Position - dragStart
+
+        Panel.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+
+        updateSettingsPos()
+    end
+end)
+
+-- Freeze
+Button.MouseButton1Click:Connect(function()
+    local t = os.clock()
+    while os.clock() - t < Save.LagTime do
+        for i=1,500000 do end
+    end
+end)
+
+print("UltraFreeze Final Version Loaded")LagBox.Position = UDim2.new(0,10,0,40)
 LagBox.Text = tostring(Save.LagTime)
 LagBox.BackgroundColor3 = Color3.fromRGB(20,20,20)
 LagBox.TextColor3 = Color3.fromRGB(0,255,255)
@@ -209,4 +441,5 @@ Button.MouseButton1Click:Connect(function()
         for i=1,500000 do end
     end
 end)
-print("UltraFreeze By Snowy Loaded")
+
+print("UltraFreeze Successfully Loaded")
